@@ -159,15 +159,11 @@ def gblur_imagick(x, s):
 def gblur_krita(x, s):
 	import tempfile, iio, os
 	from math import pi as π
-	from os.path import dirname, basename
+	from os.path import dirname as d, basename as b
 	X = f"{tempfile.NamedTemporaryFile().name}.png"
 	Y = f"{tempfile.NamedTemporaryFile().name}.png"
 	S = f"{tempfile.NamedTemporaryFile().name}.py"
-	c = f"PYTHONPATH={dirname(S)} kritarunner -s {basename(S[:-3])}"
-	print(f"X = {X}")
-	print(f"Y = {Y}")
-	print(f"S = {S}")
-	print(f"c = {c}")
+	c = f"PYTHONPATH={d(S)} kritarunner -s {b(S[:-3])} 2>/dev/null"
 	with open(S, "w") as f:
 		print(f"""
 import krita
@@ -323,6 +319,16 @@ def gblur_octave(x, s):
 def gblur_tfm(x, s):
 	# pip install tensorflow-cpu
 	# pip install tf-models-official
+	if True:
+		import logging, os
+		os.environ["TF_CPP_MIN_LOG_LEVEL"] = "3"
+		os.environ["GRPC_VERBOSITY"] = "ERROR"
+		os.environ["GLOG_minloglevel"] = "2"
+		logging.disable(logging.WARNING)
+		logging.getLogger("tensorflow").disabled = True
+	import silence_tensorflow
+	silence_tensorflow.silence_tensorflow()
+
 	import tensorflow
 	import tensorflow_models
 	n = 2 * round(s * 3) + 1
@@ -342,6 +348,8 @@ def gblur_pix(x, s):
 @boundarize
 def gblur_keras(x, s):
 	# pip install keras-cv
+	import silence_tensorflow
+	silence_tensorflow.silence_tensorflow()
 	import tensorflow
 	import keras_cv
 	n = 2 * round(s * 3) + 1

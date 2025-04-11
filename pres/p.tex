@@ -1,23 +1,16 @@
 \documentclass[t]{beamer}
-%\usepackage[french]{babel}   % french typographical conventions
-\usepackage{inconsolata}     % for a nicer (e.g. non-courier) tt family font
-%\usepackage{amsthm,amsmath}  % fancier mathematics
-%\usepackage{array} % to fine-tune tabular spacing
+\usepackage{inconsolata}    % for a nicer (e.g. non-courier) tt family font
+\usepackage{array}          % to fine-tune tabular spacing
+\usepackage{graphbox}       % to include images
+\usepackage{soul}           % for colored strikethrough
 
-\usepackage{array} % to fine-tune tabular spacing
-%\usepackage{graphicx}        % to include images
-\usepackage{graphbox}        % to include images
-%\usepackage{animate}         % to include animated images
-\usepackage{soul}            % for colored strikethrough
-%\usepackage{bbding}          % for Checkmark and XSolidBrush
-\usepackage{hyperref,url}
-
-\colorlet{darkgreen}{black!50!green}  % used for page numbers
-\definecolor{term}{rgb}{.9,.9,.9}     % used for code insets
-
+% margins and indents
 \setlength{\parindent}{0em}
 \setlength{\parskip}{1em}
 
+% colors
+\colorlet{darkgreen}{black!50!green}  % used for page numbers
+\definecolor{twback}{RGB}{210,210,210}  % used for the background of tweets
 
 % coco's macros
 \def\R{\mathbf{R}}
@@ -60,10 +53,6 @@
 \makeatother
 
 
-
-% btweet macro
-\definecolor{twback}{RGB}{210,210,210}
-
 % macro for a circled checkmarck
 \newcommand\circledmark{%
   \ooalign{%
@@ -74,9 +63,19 @@
   }%
 }
 
-%MAKE SHELL=/bin/bash
+
+
+
 
 \begin{document}
+
+%MAKE SHELL=/bin/bash
+%MAKE
+%MAKE # This variable with all the stems is used throughout the makefile
+%MAKE
+%MAKE M = borelli torch tfm keras pix pillow scipy opencv skimage vips \
+%MAKE     imagick gmic ffmpeg gimp krita rust octave julia
+%MAKE
 
 \addtocounter{framenumber}{-1}
 \begin{frame}[plain,fragile]
@@ -120,6 +119,11 @@ SUMMARY OF RESULTS\\
 
 \bigskip
 
+%MAKE # build an example of each blur
+%MAKE
+%MAKE all: $(M:%=o/x_%.png)
+%MAKE o/x_%.png : f/x.png ; python gblurs.py $* -i $^ -o $@ -s 14
+
 \tiny
 \hspace*{-4em}\begin{tabular}{llllll}
 	\includegraphics[width=0.15\linewidth]{f/x.png}&
@@ -128,16 +132,12 @@ SUMMARY OF RESULTS\\
 	\includegraphics[width=0.15\linewidth]{o/x_tfm.png}&
 	\includegraphics[width=0.15\linewidth]{o/x_keras.png}&
 	\includegraphics[width=0.15\linewidth]{o/x_pix.png}\\
-	%\includegraphics[width=0.15\linewidth]{o/x_rust.png}&
-	%\includegraphics[width=0.15\linewidth]{o/x_pillow.png}\\
 	 &
 	\only<2>{\bf\color{blue} borelli} &
 	torchvision &
 	tf:models &
 	tf:keras &
 	jax:pix \\
-	%rust:image &
-	%pillow \\
 	&&&&&\\
 	\includegraphics[width=0.15\linewidth]{o/x_pillow.png}&
 	\includegraphics[width=0.15\linewidth]{o/x_scipy.png}&
@@ -184,23 +184,6 @@ SUMMARY OF RESULTS\\
 	\vfill
 
 \end{frame}
-
-%\begin{frame}
-%
-%	\vfill
-%
-%	\begin{center}
-%		{%
-%			\setlength{\fboxsep}{0pt}%
-%			\setlength{\fboxrule}{0.5pt}%
-%			\fbox{\includegraphics[width=\linewidth]{f/gblur_borelli.png}}
-%		}
-%	\end{center}
-%
-%	\vfill
-%
-%\end{frame}
-
 
 
 % SLIDE with tweets
