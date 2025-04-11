@@ -1,0 +1,16 @@
+borelli	0.26
+torch	85.07
+keras	9.35
+pix	3.00
+pillow	0.23
+scipy	1.20
+opencv	0.47
+skimage	1.14
+vips	0.77
+gmic	0.47
+ffmpeg	0.45
+gimp	2.21
+krita	2.49
+rust	1.18
+octave	49.00
+julia	8.26

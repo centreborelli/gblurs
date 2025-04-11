@@ -16,6 +16,9 @@ The program has no dependencies in itself, but calling it with each method
 requires that you have installed the corresponding dependency.  For example, if
 you don't have "gimp", then gimps' Gaussian blur won't be available.
 
+Any publicly available Gaussian blur that has no interface here is considered a
+bug.
+
 
 shell usage
 -----------

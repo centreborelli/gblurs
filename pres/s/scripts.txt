@@ -1,0 +1,9 @@
+for i in `seq 1 50` `seq 60 10 200` 300 400 500 600 700 800 900; do plambda zero:1024x1024 randg|/usr/bin/time -f "$i %e" python gblurs.py ymscript -s $i -i - -o /dev/null ; done 2> /tmp/sizs_ymscript.txt
+
+cat /tmp/sizs_ymscript.txt |g -e 'plot "-" w lines'
+
+M="opencv scipy torch pillow skimage imagick gmagick ymscript"
+
+for i in $M;do for j in $M; do plambda /tmp/exp_$i.npy /tmp/exp_$j.npy -|imprintf "%r %e $i $j\n"; done; done >diffs_g10_resume.txt
+
+(echo 8 8 1 1; cat diffs_g10_resume.txt |cut -f 1 -d' ')|ntiply 40|qauto -p 0|palette 0 300 botw|d

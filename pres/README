@@ -1,0 +1,13 @@
+Files:
+
+README         : this file
+pdflatexfilter : latex helper
+Makefile       :
+p.tex          : the actual presentation
+
+Folders:
+
+f : base images, commited into git
+s : shell scripts that perform all the experiments
+o : computed png images, used in the presentation (dummy in git)
+t : temporary npy files for the experimemnts (dummy in git)
