@@ -77,6 +77,7 @@ def boundarize(f):
 @boundarize
 @colorize
 def gblur_borelli(x, σ):
+	# pip install numpy
 	from numpy.fft import fft2, ifft2, fftfreq
 	from numpy import meshgrid, exp, pi as π
 	h,w = x.shape                              # shape of the rectangle
@@ -93,6 +94,7 @@ def gblur_borelli(x, σ):
 @quantize8
 @boundarize
 def gblur_pillow(x, s):
+	# pip install pillow
 	import numpy, PIL.Image, PIL.ImageFilter
 	X = PIL.Image.fromarray(x.squeeze())
 	G = PIL.ImageFilter.GaussianBlur(s)
@@ -102,6 +104,7 @@ def gblur_pillow(x, s):
 
 @boundarize
 def gblur_scipy(x, s):
+	# pip install scipy
 	import scipy.ndimage
 	y = scipy.ndimage.gaussian_filter(x, sigma=(s,s,0))
 	return y
@@ -326,8 +329,6 @@ def gblur_tfm(x, s):
 		os.environ["GLOG_minloglevel"] = "2"
 		logging.disable(logging.WARNING)
 		logging.getLogger("tensorflow").disabled = True
-	import silence_tensorflow
-	silence_tensorflow.silence_tensorflow()
 
 	import tensorflow
 	import tensorflow_models
@@ -348,18 +349,17 @@ def gblur_pix(x, s):
 @boundarize
 def gblur_keras(x, s):
 	# pip install keras-cv
-	import silence_tensorflow
-	silence_tensorflow.silence_tensorflow()
+	if True:
+		import logging, os
+		os.environ["TF_CPP_MIN_LOG_LEVEL"] = "3"
+		os.environ["GRPC_VERBOSITY"] = "ERROR"
+		os.environ["GLOG_minloglevel"] = "2"
+		logging.disable(logging.WARNING)
+		logging.getLogger("tensorflow").disabled = True
 	import tensorflow
 	import keras_cv
 	n = 2 * round(s * 3) + 1
 	G = keras_cv.layers.RandomGaussianBlur(n, (s,s) )  # s=random bounds!
-	#G = keras.layers.RandomGaussianBlur(
-	#		factor=1,
-	#		kernel_size=n,
-	#		sigma=1,
-	#		value_range=(0,255)
-	#		)
 	X = tensorflow.convert_to_tensor(x)
 	Y = G(X)
 	y = Y.numpy()
