@@ -428,4 +428,4 @@ if __name__ == "__main__":
 		y = f(x, s)
 	iio.write(o, y)
 
-version = 2
+version = 3

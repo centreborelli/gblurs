@@ -121,7 +121,7 @@ SUMMARY OF RESULTS\\
 
 %MAKE # build an example of each blur
 %MAKE
-%MAKE all: $(M:%=o/x_%.png)
+%MAKE all : $(M:%=o/x_%.png)
 %MAKE o/x_%.png : f/x.png ; python gblurs.py $* -i $^ -o $@ -s 14
 
 \tiny
@@ -528,6 +528,14 @@ VISUAL COMPARISON\\
 =================
 
 N=1000 s=3
+
+%MAKE all : $(M:%=r1000_g3_%.png)
+%MAKE o/r1000_g3_%.png: t/r1000_g3_%.npy; downsa v 4 $^ | qeasy {-,}0.01 - $@
+%MAKE t/r1000_g3_%.npy   : t/r1000.npy ; python gblurs.py $* -i $^ -o $@ -s 3
+%MAKE t/r1000_g30_%.npy  : t/r1000.npy ; python gblurs.py $* -i $^ -o $@ -s 30
+%MAKE t/r1000_g100_%.npy : t/r1000.npy ; python gblurs.py $* -i $^ -o $@ -s 100
+%MAKE t/r1000.npy : ; plambda zero:1000x1000 randg -o t/r1000.npy
+%MAKE t/r4000.npy : ; plambda zero:4000x4000 randg -o t/r4000.npy
 
 \tiny
 \hspace*{-4em}\begin{tabular}{llllll}
