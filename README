@@ -1,0 +1,42 @@
+GBLURS
+======
+
+A sh and python interface to all Gaussian blurs.
+
+Wait, wait. I'm worried what you just heard was, "an interface to a lot of
+Gaussian blurs".  What I said was "an interface to all the Gaussian blurs that
+are there".  Do you understand?
+
+This program lets you run all Gaussian blurs with a unified interface.  The
+parameter σ is scaled to mean the same thing across all implementations.  By
+default the boundary conditions are whatever each implementation does by
+default.  A facility for arbitrary boundary condtions is given as a wrapper.
+
+The program has no dependencies in itself, but calling it with each method
+requires that you have installed the corresponding dependency.  For example, if
+you don't have "gimp", then gimps' Gaussian blur won't be available.
+
+
+shell usage
+-----------
+
+gblurs borelli -i in.png -o out.npy -s 14
+gblurs skimage -i in.png -o out.npy -s 14
+gblurs opencv  -i in.png -o out.npy -s 14
+gblurs torch   -i in.png -o out.npy -s 14
+
+
+python usage
+------------
+
+! pip install gblurs
+
+# via the universal accessor G
+from gblurs import G
+y = G("borelli", x, 14)
+y = G("skimage", x, 14)
+y = G("opencv", x, 14)
+y = G("torch", x, 14)
+
+# via individual functions
+from gblurs import gblur_borelli # etc
