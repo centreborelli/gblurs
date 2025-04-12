@@ -76,6 +76,22 @@
 %MAKE M = borelli torch tfm keras pix pillow scipy opencv skimage vips \
 %MAKE     imagick gmic ffmpeg gimp krita rust octave julia
 %MAKE
+%MAKE
+%MAKE # handy shortcut for calling the main program
+%MAKE B = python gblurs.py
+%MAKE
+%MAKE # trick to create .npy.txt files with the running time of their creation
+%MAKE T = /usr/bin/time -f %e -o $@.txt
+%MAKE
+%MAKE # avoid deleting intermediary .npy files:
+%MAKE .SECONDARY:
+%MAKE
+%MAKE all: # default target, to be filled-in alongside
+%MAKE
+%MAKE clean: ; $(RM) o/*.png t/*.npy t/*.txt
+%MAKE
+
+
 
 \addtocounter{framenumber}{-1}
 \begin{frame}[plain,fragile]
@@ -122,7 +138,7 @@ SUMMARY OF RESULTS\\
 %MAKE # build an example of each blur
 %MAKE
 %MAKE all : $(M:%=o/x_%.png)
-%MAKE o/x_%.png : f/x.png ; python gblurs.py $* -i $^ -o $@ -s 14
+%MAKE o/x_%.png : f/x.png ; $B $* -i $^ -o $@ -s 14
 
 \tiny
 \hspace*{-4em}\begin{tabular}{llllll}
@@ -251,9 +267,9 @@ NUMERICAL COMPARISON (barbara test image with $\sigma=14$)\\
 \scriptsize
 	\hspace*{-2em}%
 	\begin{tabular}{ll}
-		\includegraphics[width=0.51\linewidth]{summary_bdef.png}&
+		\includegraphics[width=0.51\linewidth]{f/summary_bdef.png}&
 		\only<2>{
-			\includegraphics[width=0.51\linewidth]{summary_bp.png}}
+			\includegraphics[width=0.51\linewidth]{f/summary_bp.png}}
 		\\
 		\only<1>{\hspace*{10em}RMSE}\only<2>{RMSE (default boundary conditions)} &
 		\only<2>{RMSE (periodic boundary conditions)}
@@ -529,13 +545,22 @@ VISUAL COMPARISON\\
 
 N=1000 s=3
 
-%MAKE all : $(M:%=r1000_g3_%.png)
-%MAKE o/r1000_g3_%.png: t/r1000_g3_%.npy; downsa v 4 $^ | qeasy {-,}0.01 - $@
-%MAKE t/r1000_g3_%.npy   : t/r1000.npy ; python gblurs.py $* -i $^ -o $@ -s 3
-%MAKE t/r1000_g30_%.npy  : t/r1000.npy ; python gblurs.py $* -i $^ -o $@ -s 30
-%MAKE t/r1000_g100_%.npy : t/r1000.npy ; python gblurs.py $* -i $^ -o $@ -s 100
+%MAKE # perlin noise experiments (together with runtime analysis)
+%MAKE
+%MAKE all : $(M:%=o/r1000_g3_%.png)
+%MAKE all : $(M:%=o/r1000_g30_%.png)
+%MAKE all : $(M:%=o/r1000_g100_%.png)
+%MAKE o/r1000_g3_%.png: t/r1000_g3_%.npy; downsa v 4 $^ | qeasy {-,}0.35 - $@
+%MAKE o/r1000_g30_%.png: t/r1000_g30_%.npy; downsa v 4 $^ | qeasy {-,}0.035 - $@
+%MAKE o/r1000_g100_%.png: t/r1000_g100_%.npy; downsa v 4 $^ |qeasy {-,}0.01 - $@
+%MAKE t/r1000_g3_%.npy   : t/r1000.npy ; $T $B $* -i $^ -o $@ -s 3
+%MAKE t/r4000_g3_%.npy   : t/r4000.npy ; $T $B $* -i $^ -o $@ -s 3
+%MAKE t/r1000_g30_%.npy  : t/r1000.npy ; $T $B $* -i $^ -o $@ -s 30
+%MAKE t/r1000_g100_%.npy : t/r1000.npy ; $T $B $* -i $^ -o $@ -s 100
 %MAKE t/r1000.npy : ; plambda zero:1000x1000 randg -o t/r1000.npy
 %MAKE t/r4000.npy : ; plambda zero:4000x4000 randg -o t/r4000.npy
+%MAKE all : o/r1000.png
+%MAKE o/r1000.png : t/r1000.npy ; qauto -p 10 $^ $@
 
 \tiny
 \hspace*{-4em}\begin{tabular}{llllll}
@@ -645,7 +670,7 @@ N=1000 s=100
 	\includegraphics[width=0.15\linewidth]{o/r1000.png}&
 	\includegraphics[width=0.15\linewidth]{o/r1000_g100_borelli.png}&
 	\includegraphics[width=0.15\linewidth]{o/r1000_g100_torch.png}&
-	&%\includegraphics[width=0.15\linewidth]{o/r1000_g100_tfm.png}
+	\includegraphics[width=0.15\linewidth]{o/r1000_g100_tfm.png} &
 	\includegraphics[width=0.15\linewidth]{o/r1000_g100_keras.png}&
 	\includegraphics[width=0.15\linewidth]{o/r1000_g100_pix.png}\\
 	 &
@@ -654,15 +679,13 @@ N=1000 s=100
 	tf:models &
 	tf:keras &
 	jax:pix \\
-	%rust:image &
-	%pillow \\
 	&&&&&\\
 	\includegraphics[width=0.15\linewidth]{o/r1000_g100_pillow.png}&
 	\includegraphics[width=0.15\linewidth]{o/r1000_g100_scipy.png}&
 	\includegraphics[width=0.15\linewidth]{o/r1000_g100_opencv.png}&
 	\includegraphics[width=0.15\linewidth]{o/r1000_g100_skimage.png}&
 	\includegraphics[width=0.15\linewidth]{o/r1000_g100_vips.png}&
-	\\ %\includegraphics[width=0.15\linewidth]{o/r1000_g100_imagick.png}\\
+	\includegraphics[width=0.15\linewidth]{o/r1000_g100_imagick.png}\\
 	pillow &
 	scipy:ndimage &
 	opencv &
@@ -709,9 +732,9 @@ NUMERICAL SIMILARITY BETWEEN THE RESULTS\\
 \scriptsize
 	\hspace*{-2em}%
 	\begin{tabular}{ll}
-		\includegraphics[width=0.51\linewidth]{summary_bdef.png}&
+		\includegraphics[width=0.51\linewidth]{f/summary_bdef.png}&
 		\only<2>{
-			\includegraphics[width=0.51\linewidth]{summary_bp.png}}
+			\includegraphics[width=0.51\linewidth]{f/summary_bp.png}}
 		\\
 		\only<1>{\hspace*{10em}RMSE}\only<2>{RMSE (default boundary conditions)} &
 		\only<2>{RMSE (periodic boundary conditions)}
@@ -726,6 +749,17 @@ LEGEND: black=0, white=20
 \begin{frame}
 VISUAL COMPARISON OF THE DIFFERENCES\\
 ====================================
+
+%MAKE all : $(M:%=o/d_borelli_%.png)
+%MAKE all : $(M:%=o/d_opencv_%.png)
+%MAKE all : $(M:%=o/d_torch_%.png)
+%MAKE t/xg14bp_%.npy : f/x.png ; $B $* -i $^ -o $@ -s 14 -b periodic
+%MAKE t/d_borelli_%.npy: t/xg14bp_borelli.npy t/xg14bp_%.npy; plambda $+ - -o $@
+%MAKE t/d_opencv_%.npy : t/xg14bp_opencv.npy  t/xg14bp_%.npy; plambda $+ - -o $@
+%MAKE t/d_torch_%.npy  : t/xg14bp_torch.npy   t/xg14bp_%.npy; plambda $+ - -o $@
+%MAKE o/d_borelli_%.png: t/d_borelli_%.npy ; qauto -p 0.1 -i $^|downsa v 2 - $@
+%MAKE o/d_opencv_%.png : t/d_opencv_%.npy  ; qauto -p 0.1 -i $^|downsa v 2 - $@
+%MAKE o/d_torch_%.png  : t/d_torch_%.npy   ; qauto -p 0.1 -i $^|downsa v 2 - $@
 
 \tiny
 \hspace*{-4em}\begin{tabular}{llllll}
@@ -1066,6 +1100,20 @@ NUMERICAL TEST OF THE SEMIGROUP PROPERTY\\
 
 $G_3 G_4 u - G_5 u$
 
+%MAKE # test the semigroup property
+%MAKE all : $(M:%=o/gd_3_4_5_%.png)
+%MAKE all : $(M:%=o/gd_5_12_13_%.png)
+%MAKE o/gd_3_4_5_%.png  : t/gd_3_4_5_%.npy ; qeasy {-,}0.05 $^ | downsa v 2 - $@
+%MAKE t/gd_3_4_5_%.npy  : t/gb_3_4_%.npy t/ga_5_%.npy ; plambda $+ - -o $@
+%MAKE t/gb_3_4_%.npy    : t/ga_3_%.npy ; $B $* -i $^ -o $@ -s 4
+%MAKE t/ga_3_%.npy      : f/x.png   ; $B $* -i $^ -o $@ -s 3
+%MAKE t/ga_5_%.npy      : f/x.png   ; $B $* -i $^ -o $@ -s 5
+%MAKE o/gd_5_12_13_%.png: t/gd_5_12_13_%.npy; qeasy {-,}0.05 $^ |downsa v 2 - $@
+%MAKE t/gd_5_12_13_%.npy: t/gb_5_12_%.npy t/ga_13_%.npy ; plambda $+ - -o $@
+%MAKE t/gb_5_12_%.npy   : t/ga_5_%.npy ; $B $* -i $^ -o $@ -s 12
+%MAKE t/ga_13_%.npy     : f/x.png   ; $B $* -i $^ -o $@ -s 13
+
+
 \tiny
 \hspace*{-4em}\begin{tabular}{llllll}
 	%\includegraphics[width=0.15\linewidth]{o/.png}
@@ -1215,6 +1263,9 @@ $\color{red}G_\sigma\left(u^\gamma\right) \neq \left(G_\sigma u\right)^\gamma$
 \begin{frame}
 COLOPHON\\
 ========
+
+%MAKE all: o/gblur_borelli.png
+%MAKE o/gblur_%.png : f/gblur_%.png ; $B $* -i $^ -o $@ -s 2
 
 	\begin{center}
 		{%
