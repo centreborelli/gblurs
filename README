@@ -4,8 +4,8 @@ GBLURS
 A sh and python interface to all Gaussian blurs.
 
 Wait, wait. I'm worried what you just heard was, "an interface to a lot of
-Gaussian blurs".  What I said was "an interface to all the Gaussian blurs that
-are there".  Do you understand?
+Gaussian blurs".  What I said was "an interface to all the Gaussian blurs."
+Do you understand?
 
 This program lets you run all Gaussian blurs with a unified interface.  The
 parameter σ is scaled to mean the same thing across all implementations.  By
@@ -43,3 +43,41 @@ y = G("torch", x, 14)
 
 # via individual functions
 from gblurs import gblur_borelli # etc
+
+
+list of all blurs
+-----------------
+
+ID        | implementation
+----------+---------------------------------------------------------------
+borelli   | built-in, using numpy.fft.fft2
+torch     | torchvision.transforms.GaussianBlur(kernel_size=(n,n) sigma=s)
+tfm       | tensorflow_models.vision.augment.gaussian_filter2d(x, n, s)
+keras     | tensorflow keras RandomGaussianBlur
+pix       | dm_pix.gaussia_blur(x, s, n)   # part of JAX
+pillow    | x.filter(PIL.ImageFilger.GaussianBlur(s))
+scipy     | scipy.ndimage.gaussian_filter(x, sigma=(s,s,0))
+opencv    | cv2.GaussianBlur(x, (0,0), s)
+skimage   | skimage.filters.gaussian(x, sigma=s, channel_axis=-1)
+vips      | x.gaussblur(s)
+ymscript  | ymscript.gauss(x, s)
+imagick   | mogrify -gaussian 0x$s
+gmic      | gmic -blur $s
+ffmpeg    | ffmpeg -filter_complex "gblur=sigma=$s"
+gimp      | (plug-in-gauss 1 img layer {s} {s} 0)
+krita     | app.filter("gaussian blur")  # inside krita scripter
+rust      | imagecli -p "gaussian $s"
+octave    | imsmooth(x, "Gaussian", s);
+julia     | imfilter(x, Kernel.gaussian(s))
+
+
+
+Missing  (considered as bugs)
+-----------------------------
+
+ID        | status
+----------+--------------------------------------------
+darktable | trouble with b64encode inside xml filter file
+pnm       | not yet implemented
+megawave  | not yet implemented
+scilab    | not yet implemented
