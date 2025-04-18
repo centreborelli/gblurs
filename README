@@ -69,6 +69,7 @@ krita     | app.filter("gaussian blur")  # inside krita scripter
 rust      | imagecli -p "gaussian $s"
 octave    | imsmooth(x, "Gaussian", s);
 julia     | imfilter(x, Kernel.gaussian(s))
+pygame    | pygame.transform.gaussian_blur(x, s)
 
 
 
