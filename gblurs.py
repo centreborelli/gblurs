@@ -371,7 +371,7 @@ def gblur_pygame(x, s):
 	if not pygame.get_init():
 		pygame.init()
 	X = pygame.surfarray.make_surface(x)
-	S = int(s)
+	S = int(s)   # essential, otherwise it breaks
 	Y = pygame.transform.gaussian_blur(X, S)
 	y = pygame.surfarray.array3d(Y)
 	return y
@@ -407,6 +407,10 @@ gblurs = [ "borelli", "ymscript", "pillow", "opencv", "skimage",
 # * megawave's fsepconvol
 #
 # * scilab
+#
+# * rust:image:blur
+# * rust:image:fast_gaussian_blur
+# * rust:imageproc:gaussian_blur
 
 
 # unified interface for all the algorithms above
