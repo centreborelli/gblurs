@@ -315,6 +315,29 @@ def gblur_octave(x, s):
 	os.system(f"rm {X} {Y} {S}")
 	return y
 
+@quantize8
+@boundarize
+def gblur_imagej(x, s):
+	# apt install imagej # NOTE: uses legacy, non-fiji version
+	import tempfile, iio, os
+	i = True
+	X = f"{tempfile.NamedTemporaryFile().name}.png"
+	Y = f"{tempfile.NamedTemporaryFile().name}.png"
+	S = f"{tempfile.NamedTemporaryFile().name}.ijm"
+	c = f"imagej -b {S} >/dev/null"
+	with open(S, "w") as f:
+		print(f"""
+			open("{X}");
+			run("Gaussian Blur...", "sigma={s}");
+			saveAs("Png", "{Y}");
+			close();
+		""", file=f)
+	iio.write(X, x)
+	os.system(c)
+	y = iio.read(Y)
+	os.system(f"rm {X} {Y} {S}")
+	return y
+
 @boundarize
 @colorize
 def gblur_mahotas(x, s):
@@ -456,7 +479,7 @@ def gblur_rust(x, s):
 gblurs = [ "borelli", "ymscript", "pillow", "opencv", "skimage",
 	   "scipy", "tfm", "keras", "torch", "pygame", "imagick", #"gmagick",
 	   "gimp", "krita", "julia", "octave", "gmic", "ffmpeg",
-	   "mahotas", "vigra", "sitk", "kornia", "cle", "arrayfire",
+	   "mahotas", "vigra", "sitk", "kornia", "cle", "arrayfire", "imagej",
 	   "vips", "pix", "octave", "rust"]
 
 # XXX FIXME MISSING TODO :
@@ -505,4 +528,4 @@ if __name__ == "__main__":
 		y = f(x, s)
 	iio.write(o, y)
 
-version = 4
+version = 5
