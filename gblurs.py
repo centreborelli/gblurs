@@ -426,6 +426,17 @@ def gblur_keras(x, s):
 	y = Y.numpy()
 	return y
 
+def gblur_pygame(x, s):
+	# pip install pygame-ce
+	import pygame
+	if not pygame.get_init():
+		pygame.init()
+	X = pygame.surfarray.make_surface(x)
+	S = int(s)   # essential, otherwise it breaks
+	Y = pygame.transform.gaussian_blur(X, S)
+	y = pygame.surfarray.array3d(Y)
+	return y
+
 @quantize8
 @boundarize
 def gblur_rust(x, s):
@@ -443,7 +454,7 @@ def gblur_rust(x, s):
 
 # visible API
 gblurs = [ "borelli", "ymscript", "pillow", "opencv", "skimage",
-	   "scipy", "tfm", "keras", "torch", "imagick", #"gmagick",
+	   "scipy", "tfm", "keras", "torch", "pygame", "imagick", #"gmagick",
 	   "gimp", "krita", "julia", "octave", "gmic", "ffmpeg",
 	   "mahotas", "vigra", "sitk", "kornia", "cle", "arrayfire",
 	   "vips", "pix", "octave", "rust"]
@@ -458,6 +469,10 @@ gblurs = [ "borelli", "ymscript", "pillow", "opencv", "skimage",
 # * megawave's fsepconvol
 #
 # * scilab
+#
+# * rust:image:blur
+# * rust:image:fast_gaussian_blur
+# * rust:imageproc:gaussian_blur
 
 
 # unified interface for all the algorithms above

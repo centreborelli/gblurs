@@ -1013,7 +1013,7 @@ THE GAUSSIAN KERNEL IN~$\R^2$\\
 =============================
 
 	{\bf Definition:}\\[.3em]
-$G_\sigma(x)=\frac1{2\pi\sigma}e^{-\|x\|^2/2\sigma^2}$
+$G_\sigma(x)=\frac1{2\pi\sigma^2}e^{-\|x\|^2/2\sigma^2}$
 	{\color{lightgray}\small
 	(acting by convolution
 	on~$f:\R^2\to\R$)
@@ -1221,6 +1221,12 @@ $G_5 G_{12} u - G_{13} u$
 % SLIDE verification of the linearity, translation and 90-degree rotation props
 
 % SLIDE verification of laplacian-consistency
+% TODO: for each blur, compute a sequence (G_σ-δ)*(σ^2/2) for a decreasing
+% sequence of σ.  These sequene of images should converge to a laplacian
+% kernel.  Plot these sequences as lines in a feature space spanned by the
+% five-point laplacian, the fourier laplacian, and some trivial shit like 0 or
+% the dirac (or even, some other meaningful point, try to rotate the shit in
+% Nd)
 
 % SLIDE verification of limiting cases (σ=0:identity, σ=∞:average)
 
