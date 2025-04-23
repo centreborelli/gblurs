@@ -69,6 +69,14 @@ krita     | app.filter("gaussian blur")  # inside krita scripter
 rust      | imagecli -p "gaussian $s"
 octave    | imsmooth(x, "Gaussian", s);
 julia     | imfilter(x, Kernel.gaussian(s))
+mahotas   | mahotas.gaussian_filter(x, s)
+vigra     | vigra.filters.gaussianSmoothing(x, s)
+sitk      | SimpleITK.DiscreteGaussian(X, variance=s*s)
+cle       | pyclesperanto.gaussian_blur(X, sigma_x=0, sigma_y=s, sigma_z=s)
+arrayfire | arrayfire.convolve2(X, arrayfire.gaussian_kernel(n, n, s))
+kornia    | kornia.filters.gaussian_blur2d(X, kernel_size=(n,n) sigma=(s,s))
+
+
 
 
 
@@ -78,6 +86,7 @@ Missing  (considered as bugs)
 ID        | status
 ----------+--------------------------------------------
 darktable | trouble with b64encode inside xml filter file
+cupy      | trouble reliably installing cutensor
 pnm       | not yet implemented
 megawave  | not yet implemented
 scilab    | not yet implemented

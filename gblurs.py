@@ -266,13 +266,11 @@ def gblur_gimp(x, s):
 
 @boundarize
 def gblur_julia(x, s):
-	# pushd ~/src
 	# git clone git@github.com:JuliaLang/julia.git
 	# cd julia
 	# make
 	# alias julia=~/src/julia/julia
-	# popd
-	# julia -e 'Pkg.add("Images")'
+	# julia -e 'using Pkg; Pkg.add("Images")'
 	import tempfile, iio, os
 	X = f"{tempfile.NamedTemporaryFile().name}.tiff"
 	Y = f"{tempfile.NamedTemporaryFile().name}.tiff"
@@ -317,10 +315,58 @@ def gblur_octave(x, s):
 	os.system(f"rm {X} {Y} {S}")
 	return y
 
+@boundarize
+@colorize
+def gblur_mahotas(x, s):
+	# pip install mahotas
+	import mahotas
+	y = mahotas.gaussian_filter(x, s)
+	return y
+
+@boundarize
+@colorize
+def gblur_vigra(x, s):
+	# sudo apt install python3-vigra
+	import vigra
+	y = vigra.filters.gaussianSmoothing(x, s)
+	return y
+
+@boundarize
+@colorize
+def gblur_sitk(x, s):
+	# pip install SimpleITK
+	import SimpleITK
+	X = SimpleITK.GetImageFromArray(x)
+	Y = SimpleITK.DiscreteGaussian(X, variance=s*s)
+	y = SimpleITK.GetArrayFromImage(Y)
+	return y
+
+@boundarize
+def gblur_cle(x, s):
+	# pip install pyclesperanto
+	import pyclesperanto
+	X = pyclesperanto.push(x)
+	Y = pyclesperanto.gaussian_blur(X, sigma_x=0, sigma_y=s, sigma_z=s)
+	y = pyclesperanto.pull(Y)
+	return y
+
+@boundarize
+@colorize
+def gblur_arrayfire(x, s):
+	# sudo apt install python3-arrayfire
+	import arrayfire
+	import numpy
+	n = 2 * round(s * 3) + 1
+	K = arrayfire.gaussian_kernel(n, n, s)
+	X = arrayfire.from_ndarray(x)
+	Y = arrayfire.convolve2(X, K)
+	y = numpy.array(Y.to_array()).reshape(x.T.shape).T
+	return y
+
 
 @boundarize
 def gblur_tfm(x, s):
-	# pip install tensorflow-cpu
+	# pip install tensorflow
 	# pip install tf-models-official
 	if True:
 		import logging, os
@@ -345,6 +391,21 @@ def gblur_pix(x, s):
 	n = 2 * round(s * 3) + 1
 	y = dm_pix.gaussian_blur(x, s, n)
 	return y
+
+@boundarize
+@colorize
+def gblur_kornia(x, s):
+	# pip install kornia
+	import torch
+	import kornia.filters
+	assert x.ndim == 2
+	X = torch.from_numpy(x).unsqueeze(0).unsqueeze(0)  # create 4d array
+	X = X.to(torch.device("cuda" if torch.cuda.is_available() else "cpu"))
+	n = 2 * round(s * 3) + 1
+	Y = kornia.filters.gaussian_blur2d(X, kernel_size=(n,n), sigma=(s,s))
+	y = Y.squeeze().cpu().numpy()
+	return y
+
 
 @boundarize
 def gblur_keras(x, s):
@@ -384,6 +445,7 @@ def gblur_rust(x, s):
 gblurs = [ "borelli", "ymscript", "pillow", "opencv", "skimage",
 	   "scipy", "tfm", "keras", "torch", "imagick", #"gmagick",
 	   "gimp", "krita", "julia", "octave", "gmic", "ffmpeg",
+	   "mahotas", "vigra", "sitk", "kornia", "cle", "arrayfire",
 	   "vips", "pix", "octave", "rust"]
 
 # XXX FIXME MISSING TODO :
@@ -428,4 +490,4 @@ if __name__ == "__main__":
 		y = f(x, s)
 	iio.write(o, y)
 
-version = 3
+version = 4
