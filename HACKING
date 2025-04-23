@@ -13,4 +13,4 @@ To update the pypi hub, you need an account on pypi, and then run the following 
 	# update version number on file gblurs.py
 	python -m build
 	python -m twine upload dist/gblurs-X-py3-none-any.whl
-	rm -rf build dist gblurs.egg-info
+	rm -rf dist gblurs.egg-info
