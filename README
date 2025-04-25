@@ -88,5 +88,7 @@ ID        | status
 darktable | trouble with b64encode inside xml filter file
 cupy      | trouble reliably installing cutensor
 scilab    | difficulty to install image processing package
+ipol      | ives' ipol implementations (4 different codes)
 pnm       | not yet implemented
 megawave  | not yet implemented
+libgd     | not yet implemented

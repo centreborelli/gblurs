@@ -386,6 +386,39 @@ def gblur_arrayfire(x, s):
 	y = numpy.array(Y.to_array()).reshape(x.T.shape).T
 	return y
 
+@quantize8
+@boundarize
+@colorize
+def gblur_ipoldct(x, s):
+	# pip install ipol
+	import ipol
+	y = ipol.gauss(x, method="dct", sigma=s)
+	return y
+@quantize8
+@boundarize
+@colorize
+def gblur_ipoldft(x, s):
+	# pip install ipol
+	import ipol
+	y = ipol.gauss(x, method="dft", sigma=s)
+	return y
+#@quantize8
+#@boundarize
+#@colorize
+#def gblur_ipolsamp(x, s):
+#	# pip install ipol
+#	import ipol
+#	y = ipol.gauss(x, method="sampled_kernel", sigma=s)
+#	return y
+#@quantize8
+#@boundarize
+#@colorize
+#def gblur_ipollind(x, s):
+#	# pip install ipol
+#	import ipol
+#	y = ipol.gauss(x, method="lindeberg", sigma=s)
+#	return y
+
 
 @boundarize
 def gblur_tfm(x, s):
@@ -480,6 +513,7 @@ gblurs = [ "borelli", "ymscript", "pillow", "opencv", "skimage",
 	   "scipy", "tfm", "keras", "torch", "pygame", "imagick", #"gmagick",
 	   "gimp", "krita", "julia", "octave", "gmic", "ffmpeg",
 	   "mahotas", "vigra", "sitk", "kornia", "cle", "arrayfire", "imagej",
+	   "ipoldct", "ipoldft", #"ipolsamp", "ipollind",
 	   "vips", "pix", "octave", "rust"]
 
 # XXX FIXME MISSING TODO :
@@ -528,4 +562,4 @@ if __name__ == "__main__":
 		y = f(x, s)
 	iio.write(o, y)
 
-version = 5
+version = 6
