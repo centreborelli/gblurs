@@ -77,6 +77,7 @@ cle       | pyclesperanto.gaussian_blur(X, sigma_x=0, sigma_y=s, sigma_z=s)
 arrayfire | arrayfire.convolve2(X, arrayfire.gaussian_kernel(n, n, s))
 kornia    | kornia.filters.gaussian_blur2d(X, kernel_size=(n,n) sigma=(s,s))
 imagej    | run("Gaussian Blur...", "sigma={s}");
+siril     | gauss s    # inside siril script (astrophotography software)
 
 
 
@@ -92,3 +93,8 @@ ipol      | ives' ipol implementations (4 different codes)
 pnm       | not yet implemented
 megawave  | not yet implemented
 libgd     | not yet implemented
+cellprofiler | failure upon "pip install cellprofiler"
++medical imaging packages
++microscopy packages
++pde stuff
++signal processing stuff?

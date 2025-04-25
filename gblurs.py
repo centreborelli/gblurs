@@ -340,6 +340,50 @@ def gblur_imagej(x, s):
 
 @boundarize
 @colorize
+def gblur_siril(x, s):
+	# apt install siril
+	import tempfile, iio, os
+	i = True
+	X = f"{tempfile.NamedTemporaryFile().name}.tiff"
+	Y = f"{tempfile.NamedTemporaryFile().name}.tiff"
+	S = f"{tempfile.NamedTemporaryFile().name}.ssf"
+	c = f"siril-cli -s {S} >/dev/null"
+	with open(S, "w") as f:
+		print(f"""
+			requires 1.2.1
+			load {X}
+			mirrorx
+			gauss {s}
+			save {Y}
+		""", file=f)
+	iio.write(X, x)
+	os.system(c)
+	Y = f"{Y}.fit"
+	y = iio.read(Y)
+	os.system(f"rm {X} {Y} {S}")
+	return y
+
+@quantize8
+@boundarize
+@colorize
+def gblur_netpbm(x, s):
+	# apt install netpbm
+	import tempfile, iio, os
+	n = 2 * round(s * 3) + 1
+	K = f"{tempfile.NamedTemporaryFile().name}.pam"
+	X = f"{tempfile.NamedTemporaryFile().name}.pgm"
+	Y = f"{tempfile.NamedTemporaryFile().name}.pgm"
+	c1 = f"pamgauss {n} {n} -sigma={s} -maximize > {K}"
+	c2 = f"pnmconvol -nooffset -normalize {K} {X} > {Y}"
+	iio.write(X, x)
+	os.system(c1)
+	os.system(c2)
+	y = iio.read(Y)
+	os.system(f"rm {K} {X} {Y}")
+	return y
+
+@boundarize
+@colorize
 def gblur_mahotas(x, s):
 	# pip install mahotas
 	import mahotas
@@ -385,6 +429,7 @@ def gblur_arrayfire(x, s):
 	Y = arrayfire.convolve2(X, K)
 	y = numpy.array(Y.to_array()).reshape(x.T.shape).T
 	return y
+
 
 @quantize8
 @boundarize
@@ -513,6 +558,7 @@ gblurs = [ "borelli", "ymscript", "pillow", "opencv", "skimage",
 	   "scipy", "tfm", "keras", "torch", "pygame", "imagick", #"gmagick",
 	   "gimp", "krita", "julia", "octave", "gmic", "ffmpeg",
 	   "mahotas", "vigra", "sitk", "kornia", "cle", "arrayfire", "imagej",
+	   "siril", "netpbm",
 	   "ipoldct", "ipoldft", #"ipolsamp", "ipollind",
 	   "vips", "pix", "octave", "rust"]
 
@@ -562,4 +608,4 @@ if __name__ == "__main__":
 		y = f(x, s)
 	iio.write(o, y)
 
-version = 6
+version = 7
