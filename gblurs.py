@@ -410,6 +410,7 @@ def gblur_sitk(x, s):
 
 @boundarize
 def gblur_cle(x, s):
+	# apt-get install intel-opencl-icd  # or nvidia-cuda-whatever
 	# pip install pyclesperanto
 	import pyclesperanto
 	X = pyclesperanto.push(x)
@@ -560,7 +561,7 @@ gblurs = [ "borelli", "ymscript", "pillow", "opencv", "skimage",
 	   "mahotas", "vigra", "sitk", "kornia", "cle", "arrayfire", "imagej",
 	   "siril", "netpbm",
 	   "ipoldct", "ipoldft", #"ipolsamp", "ipollind",
-	   "vips", "pix", "octave", "rust"]
+	   "vips", "pix", "rust"]
 
 # XXX FIXME MISSING TODO :
 #
