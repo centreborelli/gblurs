@@ -78,6 +78,9 @@ arrayfire | arrayfire.convolve2(X, arrayfire.gaussian_kernel(n, n, s))
 kornia    | kornia.filters.gaussian_blur2d(X, kernel_size=(n,n) sigma=(s,s))
 imagej    | run("Gaussian Blur...", "sigma={s}");
 siril     | gauss s    # inside siril script (astrophotography software)
+netpbm    | pamgauss n n -sigma=s >k.pam; pnmconvol -nooffset k.pam x.pgm
+ipoldct   | ipol.gauss(x, method="dct", sigma=s)
+ipoldft   | ipol.gauss(x, method="dft", sigma=s)
 
 
 
@@ -89,12 +92,21 @@ ID        | status
 darktable | trouble with b64encode inside xml filter file
 cupy      | trouble reliably installing cutensor
 scilab    | difficulty to install image processing package
-ipol      | ives' ipol implementations (4 different codes)
-pnm       | not yet implemented
-megawave  | not yet implemented
+ipol      | ives' ipol implementations (2 missing codes)
+megawave  | difficult to source original code
 libgd     | not yet implemented
 cellprofiler | failure upon "pip install cellprofiler"
++golang/disintegration-imaging
 +medical imaging packages
 +microscopy packages
 +pde stuff
 +signal processing stuff?
++imagejs
++jimp
++sharp
+
+
+Won't do (considered redundant or unnnecessary)
+-----------------------------------------------
+
+Ruby's "minimagick", it's just a wrapper around the installed imagemagick

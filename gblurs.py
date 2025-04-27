@@ -136,6 +136,7 @@ def gblur_torch(x, s):
 @quantize8
 @boundarize
 def gblur_imagick(x, s):
+	# apt-get install imagemagick
 	import tempfile, iio, os
 	f = f"{tempfile.NamedTemporaryFile().name}.png"
 	c = f"mogrify -gaussian 0x{s} {f}"
@@ -148,6 +149,7 @@ def gblur_imagick(x, s):
 #@quantize8
 #@boundarize
 #def gblur_gmagick(x, s):
+	# apt-get install graphicsmagick
 #	import tempfile, iio, os
 #	f = f"{tempfile.NamedTemporaryFile().name}.png"
 #	c = f"gm mogrify -gaussian 0x{s} {f}"
@@ -160,6 +162,7 @@ def gblur_imagick(x, s):
 @quantize8
 @boundarize
 def gblur_krita(x, s):
+	# apt-get install krita
 	import tempfile, iio, os
 	from math import pi as π
 	from os.path import dirname as d, basename as b
@@ -196,7 +199,7 @@ doc.exportImage("{Y}", krita.InfoObject())
 
 @boundarize
 def gblur_vips(x, s):
-	# apt install libvips-tools libvips-dev
+	# apt-get install libvips-tools libvips-dev
 	# pip install pyvips
 	import pyvips
 	X = pyvips.Image.new_from_array(x)
@@ -206,7 +209,7 @@ def gblur_vips(x, s):
 
 @boundarize
 def gblur_gmic(x, s):
-	# sudo apt install gmic
+	# apt-get install gmic
 	import tempfile, iio, os
 	f = f"{tempfile.NamedTemporaryFile().name}.tiff"
 	g = f"{tempfile.NamedTemporaryFile().name}.tiff"
@@ -227,7 +230,7 @@ def gblur_gmic(x, s):
 @boundarize
 @quantize8
 def gblur_ffmpeg(x, s):
-	# apt install ffmpeg
+	# apt-get install ffmpeg
 	import tempfile, iio, os
 	f = f"{tempfile.NamedTemporaryFile().name}.png"
 	g = f"{tempfile.NamedTemporaryFile().name}.png"
@@ -241,7 +244,7 @@ def gblur_ffmpeg(x, s):
 @quantize8
 @boundarize
 def gblur_gimp(x, s):
-	# apt install gimp
+	# apt-get install gimp
 	import tempfile, iio, os
 	from math import pi as π
 	s *= π
@@ -267,9 +270,8 @@ def gblur_gimp(x, s):
 @boundarize
 def gblur_julia(x, s):
 	# git clone git@github.com:JuliaLang/julia.git
-	# cd julia
-	# make
-	# alias julia=~/src/julia/julia
+	# make -C julia
+	# alias julia=`pwd`/julia/julia
 	# julia -e 'using Pkg; Pkg.add("Images")'
 	import tempfile, iio, os
 	X = f"{tempfile.NamedTemporaryFile().name}.tiff"
@@ -292,7 +294,7 @@ def gblur_julia(x, s):
 
 @boundarize
 def gblur_octave(x, s):
-	# apt install octave octave-image
+	# apt-get install octave octave-image
 	import tempfile, iio, os
 	i = True
 	e = "npy" if i else "png"
@@ -318,7 +320,7 @@ def gblur_octave(x, s):
 @quantize8
 @boundarize
 def gblur_imagej(x, s):
-	# apt install imagej # NOTE: uses legacy, non-fiji version
+	# apt-get install imagej # NOTE: uses legacy, non-fiji version
 	import tempfile, iio, os
 	i = True
 	X = f"{tempfile.NamedTemporaryFile().name}.png"
@@ -341,7 +343,7 @@ def gblur_imagej(x, s):
 @boundarize
 @colorize
 def gblur_siril(x, s):
-	# apt install siril
+	# apt-get install siril
 	import tempfile, iio, os
 	i = True
 	X = f"{tempfile.NamedTemporaryFile().name}.tiff"
@@ -367,7 +369,7 @@ def gblur_siril(x, s):
 @boundarize
 @colorize
 def gblur_netpbm(x, s):
-	# apt install netpbm
+	# apt-get install netpbm
 	import tempfile, iio, os
 	n = 2 * round(s * 3) + 1
 	K = f"{tempfile.NamedTemporaryFile().name}.pam"
@@ -393,7 +395,7 @@ def gblur_mahotas(x, s):
 @boundarize
 @colorize
 def gblur_vigra(x, s):
-	# sudo apt install python3-vigra
+	# apt-get install python3-vigra
 	import vigra
 	y = vigra.filters.gaussianSmoothing(x, s)
 	return y
@@ -421,7 +423,7 @@ def gblur_cle(x, s):
 @boundarize
 @colorize
 def gblur_arrayfire(x, s):
-	# sudo apt install python3-arrayfire
+	# apt-get install python3-arrayfire
 	import arrayfire
 	import numpy
 	n = 2 * round(s * 3) + 1
@@ -463,6 +465,31 @@ def gblur_ipoldft(x, s):
 #	# pip install ipol
 #	import ipol
 #	y = ipol.gauss(x, method="lindeberg", sigma=s)
+#	return y
+
+#@quantize8
+#@boundarize
+#@colorize
+#def gblur_jimp(x, s):
+#       # curl -fsSL https://deb.nodesource.com/setup_lts.x | sudo -E bash -
+#       # npm install jimp
+#	import tempfile, iio, os
+#	i = True
+#	X = f"{tempfile.NamedTemporaryFile().name}.png"
+#	Y = f"{tempfile.NamedTemporaryFile().name}.png"
+#	S = f"{tempfile.NamedTemporaryFile().name}.js"
+#	c = f"node {S} {X} {Y}"
+#	with open(S, "w") as f:
+#		print(f"""
+#		const Jimp = require('jimp');
+#		Jimp.read('{X}')
+#		    .then(image => {{ image.blur({s}) .write('{Y}'); }})
+#		    .catch(() => {{}});
+#		""", file=f)
+#	iio.write(X, x)
+#	os.system(c)
+#	y = iio.read(Y)
+#	os.system(f"rm {X} {Y} {S}")
 #	return y
 
 
@@ -542,7 +569,7 @@ def gblur_pygame(x, s):
 @quantize8
 @boundarize
 def gblur_rust(x, s):
-	# do whatever it takes to install the damn rust shit
+	# echo do whatever it takes to install the damn rust shit
 	import tempfile, iio, os
 	X = f"{tempfile.NamedTemporaryFile().name}.png"
 	Y = f"{tempfile.NamedTemporaryFile().name}.png"
@@ -559,7 +586,7 @@ gblurs = [ "borelli", "ymscript", "pillow", "opencv", "skimage",
 	   "scipy", "tfm", "keras", "torch", "pygame", "imagick", #"gmagick",
 	   "gimp", "krita", "julia", "octave", "gmic", "ffmpeg",
 	   "mahotas", "vigra", "sitk", "kornia", "cle", "arrayfire", "imagej",
-	   "siril", "netpbm",
+	   "siril", "netpbm", #"jimp",
 	   "ipoldct", "ipoldft", #"ipolsamp", "ipollind",
 	   "vips", "pix", "rust"]
 
@@ -577,6 +604,20 @@ gblurs = [ "borelli", "ymscript", "pillow", "opencv", "skimage",
 # * rust:image:blur
 # * rust:image:fast_gaussian_blur
 # * rust:imageproc:gaussian_blur
+
+# print the install isntructions for all the dependencies
+def printinstall():
+	L = []
+	with open(__file__) as f:
+		L = [l.strip() for l in f]
+	p = False
+	for l in L:
+		if l.startswith("def gblur_"):
+			p = True
+		elif p and l.startswith("# "):
+			print(f"RUN {l[2:]}")
+		else:
+			p = False
 
 
 # unified interface for all the algorithms above
@@ -609,4 +650,4 @@ if __name__ == "__main__":
 		y = f(x, s)
 	iio.write(o, y)
 
-version = 7
+version = 8

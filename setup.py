@@ -3,7 +3,7 @@ import setuptools
 
 setuptools.setup(
 	name = "gblurs",
-	version = "7",
+	version = "8",
 	description = "All Gaussian Blurs",
 	classifiers = [
 		"Operating System :: OS Independent",
