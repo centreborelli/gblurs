@@ -1,0 +1,209 @@
+\documentclass[a4paper,twoside,11pt]{article}    % base article class
+\usepackage[utf8]{inputenc}         % allow utf8 input
+%\usepackage{textalpha}              % enable greek utf8 in text
+%\usepackage{alphabeta}              % enable greek utf8 in math
+\usepackage{graphicx}               % includegraphics
+\usepackage{amsmath,amsthm}         % fancier math
+%
+%\usepackage{ebgaramond}
+%
+%\usepackage{newtxtext}               % times new roman font
+%\usepackage[bigdelims,cmintegrals,vvarbb]{newtxmath}
+%
+\usepackage[osf,sups]{Baskervaldx} % lining figures
+\usepackage[bigdelims,cmintegrals,vvarbb,baskervaldx,frenchmath,upint]{newtxmath} % math font
+%\usepackage{cabin}                  % monospace font
+\usepackage[cal=boondoxo]{mathalfa} % mathcal from STIX, unslanted a bit
+%
+\usepackage{hyperref,url}           % hyperlinks and urls
+\usepackage{fancyvrb}               % fancier verbatim environment
+\usepackage[x11names]{xcolor}                 % for colors
+\usepackage{geometry}              % to change page margins
+%\usepackage{ulem}              % for striketrhough
+%\usepackage{pdflscape}              % for landscape pages
+\usepackage[vlined,algoruled]{algorithm2e} % to typeset floating algorithms
+%\delimitershortfall-1sp
+%\usepackage{mleftright}              % enlarge nested parentheses
+%\mleftright
+\setlength{\parindent}{0pt}         % no paragraph indentation
+\setlength{\parskip}{7pt}           % spacing between paragraphs
+\setlength{\emergencystretch}{3em}  % prevent overfull lines
+\pdfimageresolution 200             % change the default for included png files
+\pdfinfoomitdate=1\pdftrailerid{}   % ensure reproducible PDF
+\makeatletter\renewcommand{\verbatim@font}{\ttfamily\footnotesize}\makeatother
+\newenvironment{gallery}{}{}
+\newcommand{\galleryline}[1]{\includegraphics{#1}{\footnotesize\tt #1}\newline}
+\theoremstyle{note}
+\newtheorem{exercice}{Exercice}
+\swapnumbers
+\theoremstyle{plain}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{remark}[theorem]{Remark}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{proposition}[theorem]{Proposition}
+
+\newcommand{\1}{\mathbf{1}}
+\newcommand{\Z}{\mathbf{Z}}
+\newcommand{\N}{\mathbf{N}}
+\newcommand{\Q}{\mathbf{Q}}
+\newcommand{\R}{\mathbf{R}}
+\newcommand{\C}{\mathbf{C}}
+\newcommand{\T}{\mathbf{T}}
+\newcommand{\PP}{\mathcal{P}}
+\newcommand{\PN}{\mathbf{P}}
+\newcommand{\ud}{\mathrm{d}}
+\newcommand{\ds}{\displaystyle}
+\newcommand{\DFT}{\mathtt{DFT}}
+\newcommand{\IDFT}{\mathtt{IDFT}}
+\newcommand{\x}{\mathbf{x}}
+\newcommand{\y}{\mathbf{y}}
+\newcommand{\z}{\mathbf{z}}
+\newcommand{\q}{\mathbf{q}}
+%\newcommand{\u}{\mathbf{u}}
+\newcommand{\n}{\mathbf{n}}
+\renewcommand{\Re}{\operatorname{Re}}
+\renewcommand{\Im}{\operatorname{Im}}
+\newcommand{\abs}[1]{\left|#1\right|}
+\newcommand{\Abs}[1]{\left\|#1\right\|}
+\newcommand{\parens}[1]{\left(#1\right)}
+\newcommand{\pairing}[2]{\left\langle #1,#2\right\rangle}
+
+
+% widecheck
+% (code from mathabx.sty and mathabx.dcl)
+\DeclareFontFamily{U}{mathx}{\hyphenchar\font45}
+\DeclareFontShape{U}{mathx}{m}{n}{
+	<5> <6> <7> <8> <9> <10>
+	<10.95> <12> <14.4> <17.28> <20.74> <24.88>
+	mathx10
+}{}
+\DeclareSymbolFont{mathx}{U}{mathx}{m}{n}
+\DeclareFontSubstitution{U}{mathx}{m}{n}
+\DeclareMathAccent{\widecheck}{0}{mathx}{"71}
+\DeclareMathAccent{\wideparen}{0}{mathx}{"75}
+% really wide hat
+\usepackage{scalerel,stackengine}
+\stackMath
+\newcommand\reallywidehat[1]{%
+\savestack{\tmpbox}{\stretchto{%
+  \scaleto{%
+    \scalerel*[\widthof{\ensuremath{#1}}]{\kern-.6pt\bigwedge\kern-.6pt}%
+    {\rule[-\textheight/2]{1ex}{\textheight}}%WIDTH-LIMITED BIG WEDGE
+  }{\textheight}% 
+}{0.5ex}}%
+\stackon[1pt]{#1}{\tmpbox}%
+}
+
+\begin{document}
+{\Large
+\begin{center}
+	Comprehensive evaluation of all Gaussian blur implementations
+\end{center}
+}
+
+\begin{abstract}
+We propose an unified interface to run all freely available Gaussian blur
+implementations.  We use this interface to compare and evaluate the results 
+\end{abstract}
+
+\section{Theory and practice of Gaussian blurring}
+
+\subsection{The Gaussian function in~$\R^d$}
+
+The {\bf Gaussian function} in Euclidean~$d$-dimensional space is defined as
+\[
+	G_{\sigma}(\x)=\frac1{\left(\sigma\sqrt{2\pi}\right)^d}\exp\frac{-\Abs{\x}^2}{2\sigma^2}.
+\]
+for~$\sigma>0$.
+It is a smooth, strictly positive, radial function of integral 1.
+
+This function is~{\bf separable} along the dimensions, meaning
+that~$G_\sigma((\x,\y))=G_\sigma(\x)G_\sigma(\y)$
+for~$(\x,\y)\in\R^p\times\R^{d-p}$.  Or more
+generally~$G_\sigma(\x)=\prod_iG_\sigma(x_i)$.
+
+The {\bf derivatives} of~$G$ can be computed by elementary means:
+\[
+	\frac{\partial G_\sigma(\x)}{\partial x_i}
+	=
+	\left(-\frac{x_i}{\sigma^2}\right)
+	G_\sigma(\x)
+	\qquad
+	\qquad
+	\frac{\partial^2 G_\sigma(\x)}{\partial x_i^2}
+	=
+	\left(\frac{x_i^2}{\sigma^4}-\frac1{\sigma^2}\right)
+	G_\sigma(\x)
+	\qquad
+	\qquad
+	\Delta G_\sigma(\x)
+	=
+	\left(\frac{\Abs{\x}^2}{\sigma^4}-\frac d{\sigma^2}\right)
+	G_\sigma(\x)
+\]
+from this last expression we see that the laplacian changes sign at a
+radius~$\Abs{\x}=\sigma\sqrt{d}$, separating a convex behavior around the
+origin, to a concave region in the rest of space.
+The partial derivative with respect to~$\sigma$
+\[
+	\frac{\partial G_\sigma(\x)}{\partial\sigma}
+	=
+	\left(\frac{\Abs{\x}^2}{\sigma^3}-\frac d{\sigma}\right)
+	G_\sigma(\x)
+\]
+looks similar to the Laplacian.  We could say that it satisfies a heat
+equation with time-dependent
+coefficient~$\frac{\partial}{\partial\sigma}G=\sigma\Delta G$.  We can obtain
+an actual {\bf heat equation} by re-parametrizing~$t=2\sigma^2$ so
+that~$\frac{\partial}{\partial t}G=\Delta G$.
+
+Finally, {\bf Fourier transform} of~$G_\sigma$ is
+\[
+	\widehat{G_\sigma}(\y)=\exp\frac{-\sigma^2\Abs{y}^2}2.
+\]
+
+\subsection{Gaussian blur in $\R^2$}
+
+{\bf Gaussian blur} is defined as convolution by the Gaussian function.  
+
+We are interested in the particular case~$d=2$
+\[
+	G_{\sigma}(x,y)=\frac1{2\pi\sigma^2}\exp\frac{-(x^2+y^2)}{2\sigma^2}.
+\]
+
+define scale space
+
+Let~$f:\R^2\to\R$ be a suitable function, we denote by~$G_\sigma f$ the
+function
+\[
+	G_\sigma f (x) := \parens{G_\sigma * f}(x)
+\]
+Applying $G_\sigma$ is thus called~\emph{blurring the function by a Gaussian
+of size~$\sigma$}.  More generally, the three-variable function
+\[
+	(\sigma,x,y)\mapsto G_\sigma f(x,y)
+\]
+is called the~{\bf Gaussian scale space} of~$f$.
+
+
+\subsection{Gaussian blur in $\T^2$}
+
+\subsection{Discrete Gaussian blur}
+
+\subsection{Implementation strategies}
+
+
+
+\section{Overview of available implementations}
+
+
+
+\section{Unified interface}
+
+
+
+\section{Evaluation}
+
+\end{document}
+% vim:set tw=77 filetype=tex spell spelllang=en:

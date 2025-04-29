@@ -3,7 +3,8 @@ Files:
 README         : this file
 pdflatexfilter : latex helper
 Makefile       :
-p.tex          : the actual presentation
+p.tex          : presentation slides
+a.tex          : article
 
 Folders:
 
