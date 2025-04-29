@@ -1,9 +1,9 @@
 
 
 
-def gblur_ymscript(x, s):
+def gblur_ymscript(x, s, **k):
 	import ymscript
-	y = ymscript.gauss(x, s)
+	y = ymscript.gauss(x, s, **k)
 	return y
 
 def eprint(*args, **kwargs):
@@ -138,8 +138,8 @@ def gblur_torch(x, s):
 def gblur_imagick(x, s):
 	# apt-get install imagemagick
 	import tempfile, iio, os
-	f = f"{tempfile.NamedTemporaryFile().name}.png"
-	c = f"mogrify -gaussian 0x{s} {f}"
+	f = f"{tempfile.NamedTemporaryFile().name}.tiff"
+	c = f"mogrify -gaussian 0x{s} -depth 32f {f}"
 	iio.write(f, x)
 	os.system(c)
 	y = iio.read(f)
@@ -411,6 +411,17 @@ def gblur_sitk(x, s):
 	return y
 
 @boundarize
+@colorize
+def gblur_sitkr(x, s):
+	# pip install SimpleITK
+	import SimpleITK
+	X = SimpleITK.GetImageFromArray(x)
+	Y = SimpleITK.SmoothingRecursiveGaussian(X, sigma=s)
+	y = SimpleITK.GetArrayFromImage(Y)
+	return y
+
+
+@boundarize
 def gblur_cle(x, s):
 	# apt-get install intel-opencl-icd  # or nvidia-cuda-whatever
 	# pip install pyclesperanto
@@ -586,6 +597,7 @@ gblurs = [ "borelli", "ymscript", "pillow", "opencv", "skimage",
 	   "scipy", "tfm", "keras", "torch", "pygame", "imagick", #"gmagick",
 	   "gimp", "krita", "julia", "octave", "gmic", "ffmpeg",
 	   "mahotas", "vigra", "sitk", "kornia", "cle", "arrayfire", "imagej",
+	   "sitkr",
 	   "siril", "netpbm", #"jimp",
 	   "ipoldct", "ipoldft", #"ipolsamp", "ipollind",
 	   "vips", "pix", "rust"]
