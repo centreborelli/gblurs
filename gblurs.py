@@ -566,15 +566,25 @@ def gblur_keras(x, s):
 	y = Y.numpy()
 	return y
 
+@boundarize
 def gblur_pygame(x, s):
 	# pip install pygame-ce
+	import os
+	os.environ['PYGAME_HIDE_SUPPORT_PROMPT'] = "1"
 	import pygame
 	if not pygame.get_init():
 		pygame.init()
+	g = False
+	if x.shape[2] == 1:
+		from numpy import dstack as d
+		x = d([x,x,x])  # pygame only works with color textures
+		g = True
 	X = pygame.surfarray.make_surface(x)
 	S = int(s)   # essential, otherwise it breaks
 	Y = pygame.transform.gaussian_blur(X, S)
 	y = pygame.surfarray.array3d(Y)
+	if g:
+		y = y[:,:,0]
 	return y
 
 @quantize8
@@ -662,4 +672,4 @@ if __name__ == "__main__":
 		y = f(x, s)
 	iio.write(o, y)
 
-version = 8
+version = 9
